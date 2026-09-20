@@ -1,0 +1,1 @@
+# HealthPulse - Full Featured\nDashboard, BP Logger, Charts, History, Premium\nBundle: com.healthpulse.app\nBuild: Codemagic ready
