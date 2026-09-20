@@ -1,0 +1,21 @@
+workflows:
+  ios-workflow:
+    name: HealthPulse iOS Build
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    environment:
+      xcode: latest
+    scripts:
+      - name: Build IPA
+        script: |
+          xcodebuild -project "HealthPulseApp.xcodeproj" -scheme "HealthPulseApp" -configuration Release -sdk iphoneos -archivePath /tmp/HealthPulseApp.xcarchive archive CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
+          APP_PATH=$(find /tmp/HealthPulseApp.xcarchive -name "*.app" | head -1)
+          echo "APP_PATH=$APP_PATH"
+          mkdir -p /tmp/Payload
+          cp -R "$APP_PATH" /tmp/Payload/
+          cd /tmp && zip -r HealthPulseApp.ipa Payload
+          mkdir -p $CM_BUILD_DIR/build/ios/ipa
+          cp /tmp/HealthPulseApp.ipa $CM_BUILD_DIR/build/ios/ipa/
+          ls -lh $CM_BUILD_DIR/build/ios/ipa/
+    artifacts:
+      - build/ios/ipa/*.ipa
